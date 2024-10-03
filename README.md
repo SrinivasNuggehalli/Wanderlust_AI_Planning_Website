@@ -17,7 +17,7 @@ npm run dev
 
 ```
 
-Create .env.local in src folder
+Create .env.local in src folder: .env.local
 Paste below API key:
 ```
 VITE_GOOGLE_PLACE_API_KEY=AIzaSyAQmlHw2evnBxdKKD28ijvoKq7XyD9sQzo
