@@ -15,7 +15,7 @@ npm install --save @googlemaps/google-maps-services-js
 
 npm run dev
 
-'''
+```
 
 Create .env.local in src folder
 Paste below API key:
