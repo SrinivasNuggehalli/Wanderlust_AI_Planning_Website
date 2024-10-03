@@ -3,7 +3,7 @@ Wanderlust_AI
 Clone Repository 
 
 ```
-it clone https://github.com/SrinivasNuggehalli/Wanderlust_AI_Planning_Website.git
+git clone https://github.com/SrinivasNuggehalli/Wanderlust_AI_Planning_Website.git
 cd Wanderlust_AI_Planning_Website/wanderlust
 ```
 
