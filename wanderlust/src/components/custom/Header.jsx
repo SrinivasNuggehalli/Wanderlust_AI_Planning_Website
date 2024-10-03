@@ -21,6 +21,7 @@ function Header() {
   };
 
   return (
+
     <div className='p-3 shadow-sm flex justify-between items-center px-5'>
       {/* Logo and Wanderlust AI title */}
       <div className='flex items-center gap-3'>
@@ -46,6 +47,7 @@ function Header() {
       </div>
     </div>
   );
+
 }
 
 export default Header;
