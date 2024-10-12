@@ -11,6 +11,9 @@ npm install --save @googlemaps/google-maps-services-js
 npm install @react-oauth/google@latest
 
 npm install react-google-login
+
+npm install @react-google-maps/api
+
 ```
 
 Install Dependencies
