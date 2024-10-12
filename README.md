@@ -2,17 +2,18 @@ Wanderlust_AI
 
 Clone Repository 
 
-```
+```          
 git clone https://github.com/SrinivasNuggehalli/Wanderlust_AI_Planning_Website.git
 cd Wanderlust_AI_Planning_Website/wanderlust
 
-npm install --save @googlemaps/google-maps-services-js
+# Install @googlemaps/google-maps-services-js
+npm install @googlemaps/google-maps-services-js --save
 
+# Install @react-oauth/google, which is compatible with React 18
 npm install @react-oauth/google@latest
 
-npm install react-google-login
-
-npm install @react-google-maps/api
+# Remove react-google-login since it is incompatible with React 18
+npm uninstall react-google-login
 
 ```
 
@@ -20,7 +21,7 @@ Install Dependencies
 ```
 npm install
 
-npm install --save @googlemaps/google-maps-services-js
+npm install @react-google-maps/api
 
 npm run dev
 
