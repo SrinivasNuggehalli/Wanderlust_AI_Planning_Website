@@ -1,40 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GoogleLogin, googleLogout } from '@react-oauth/google';
 import { Button } from '../ui/button';
+import { jwtDecode } from 'jwt-decode';
 
 function Header() {
   const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    // Check for existing user data in localStorage on component mount
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const handleLoginSuccess = (response) => {
     console.log('Login Success:', response);
-    // Use the token to get user profile information
     const token = response.credential;
-    // Send token to your backend to retrieve profile info or decode it on the frontend
-    // Assuming `jwt-decode` is used to decode the JWT
     const decoded = jwtDecode(token);
     setUser(decoded);
+    localStorage.setItem('user', JSON.stringify(decoded));
   };
 
   const handleLogout = () => {
-    googleLogout(); // Call the logout function
-    setUser(null);  // Clear user data on logout
+    console.log('Logout initiated');
+    googleLogout();
+    setUser(null);
+    localStorage.removeItem('user');
+    console.log('User state after logout:', user);
+    console.log('LocalStorage after logout:', localStorage.getItem('user'));
   };
+
+  // Debug logging
+  useEffect(() => {
+    console.log('Current user state:', user);
+  }, [user]);
 
   return (
     <div className='p-3 shadow-sm flex justify-between items-center px-5'>
-      {/* Logo and Wanderlust AI title */}
       <div className='flex items-center gap-3'>
         <img src='/logo.svg' alt='Wanderlust AI Logo' className='w-10 h-10' />
         <h1 className='text-xl font-bold'>Wanderlust AI</h1>
       </div>
 
-      {/* Sign in / Logout Button */}
       <div>
         {!user ? (
           <GoogleLogin
             onSuccess={handleLoginSuccess}
-            onError={() => {
-              console.log('Login Failed');
+            onError={(error) => {
+              console.log('Login Failed:', error);
             }}
           />
         ) : (

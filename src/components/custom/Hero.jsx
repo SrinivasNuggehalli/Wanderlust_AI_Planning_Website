@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 function Hero() {
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between mx-8 lg:mx-24 gap-8 lg:gap-16 py-16 lg:py-24">
+    <div className="flex flex-col lg:flex-row items-center justify-between mx-8 lg:mx-24 gap-8 lg:gap-16 py-16 lg:py-2">
       {/* Text Section */}
       <div className="flex flex-col items-center lg:items-start lg:w-1/2">
         <h1 className="font-extrabold text-4xl lg:text-6xl text-center lg:text-left leading-tight">
