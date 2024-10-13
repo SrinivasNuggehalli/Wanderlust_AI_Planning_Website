@@ -21,6 +21,12 @@ npx shadcn@latest add toast
 
 npm install @google/generative-ai
 
+npx shadcn@latest add dialog
+npm install react-icons
+
+npm install firebase
+npm install -g firebase-tools
+
 ```
 
 Install Dependencies
