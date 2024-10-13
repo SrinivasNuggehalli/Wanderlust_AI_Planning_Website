@@ -14,21 +14,29 @@ function Header() {
     }
   }, []);
 
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const logout = () => {
+    googleLogout();
+    setUser(null);
+    // console.log(localStorage.getItem('user'))
+    // console.log(localStorage.getItem('user'))
+    localStorage.removeItem('user');
+    // console.log('Logged out');
+    localStorage.removeItem('Token');
+    // Force a re-render by updating a timestamp
+    setUser({ loggedOut: new Date().getTime() });
+  };
+
   const handleLoginSuccess = (response) => {
     console.log('Login Success:', response);
     const token = response.credential;
+    console.log('Token:', token);
     const decoded = jwtDecode(token);
-    setUser(decoded);
-    localStorage.setItem('user', JSON.stringify(decoded));
-  };
-
-  const handleLogout = () => {
-    console.log('Logout initiated');
-    googleLogout();
-    setUser(null);
-    localStorage.removeItem('user');
-    console.log('User state after logout:', user);
-    console.log('LocalStorage after logout:', localStorage.getItem('user'));
+    login(decoded);
   };
 
   // Debug logging
@@ -44,7 +52,7 @@ function Header() {
       </div>
 
       <div>
-        {!user ? (
+        {!user || user.loggedOut ? (
           <GoogleLogin
             onSuccess={handleLoginSuccess}
             onError={(error) => {
@@ -54,7 +62,7 @@ function Header() {
         ) : (
           <div className="flex items-center gap-3">
             <p>Welcome, {user.name}</p>
-            <Button onClick={handleLogout}>Logout</Button>
+            <Button onClick={logout}>Logout</Button>
           </div>
         )}
       </div>
