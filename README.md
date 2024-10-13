@@ -15,6 +15,12 @@ npm install @react-oauth/google@latest
 # Remove react-google-login since it is incompatible with React 18
 npm uninstall react-google-login
 
+npx shadcn@latest add sonner
+
+npx shadcn@latest add toast
+
+npm install @google/generative-ai
+
 ```
 
 Install Dependencies
@@ -33,6 +39,8 @@ Paste below API key:
 VITE_GOOGLE_PLACE_API_KEY=AIzaSyAQmlHw2evnBxdKKD28ijvoKq7XyD9sQzo
 
 VITE_GOOGLE_AUTH_CLIENT_ID=861449504871-3gje3nkmiah5b84ljrvi8cu59f1h40ri.apps.googleusercontent.com
+
+VITE_GOOGLE_GEMINI_AI_API_KEY = AIzaSyDqsHAJkXqAk5_tjt-VYgrnSDtkAtPzcjM
 
 
 ```
