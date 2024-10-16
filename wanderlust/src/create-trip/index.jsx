@@ -99,6 +99,7 @@ function CreateTrip() {
       toast("Failed to save trip.");
     } finally {
       setLoading(false);
+      navigate('/view-trip/'+docId)
     }
   };
 
