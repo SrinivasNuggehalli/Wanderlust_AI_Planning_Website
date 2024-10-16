@@ -18,6 +18,13 @@ import {
 } from "@/components/ui/dialog";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api'; // Import Google Map components
+
+// Map container style
+const containerStyle = {
+  width: '100%',
+  height: '400px'
+};
 
 function CreateTrip() {
   const [place, setPlace] = useState();
@@ -25,6 +32,18 @@ function CreateTrip() {
   const [openDailog, setOpenDailog] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // State for map center coordinates
+  const [mapCenter, setMapCenter] = useState({
+    lat: 37.7749, // Default center: San Francisco
+    lng: -122.4194
+  });
+
+  // Load Google Maps Script
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_PLACE_API_KEY, // Ensure API key is correctly loaded
+    libraries: ['places'] // Add 'places' for autocomplete
+  });
 
   const handleInputChange = (name, value) => {
     setFormData({
@@ -99,7 +118,7 @@ function CreateTrip() {
       toast("Failed to save trip.");
     } finally {
       setLoading(false);
-      navigate('/view-trip/'+docId)
+      navigate('/view-trip/' + docId);
     }
   };
 
@@ -120,102 +139,127 @@ function CreateTrip() {
     });
   };
 
+  // Update map center when a place is selected
+  useEffect(() => {
+    if (place?.value?.geometry?.location) {
+      const { lat, lng } = place.value.geometry.location;
+      setMapCenter({
+        lat: lat(), // Use the function returned by Google Places API for lat/lng
+        lng: lng()
+      });
+    }
+  }, [place]);
+
+  // Render loading state if the Google Maps script is not yet loaded
+  if (!isLoaded) return <div>Loading...</div>;
+
   return (
-    <><div className='sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10'>
-      <h2 className='font-bold text-3xl'>Tell us your travel preferences 🏕️🌴</h2>
-      <p className='mt-3 text-gray-500 text-xl'>Just provide some basic information, and our trip planner will generate a customized itinerary based on your preferences.</p>
+    <>
+      <div className='sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10'>
+        <h2 className='font-bold text-3xl'>Tell us your travel preferences 🏕️🌴</h2>
+        <p className='mt-3 text-gray-500 text-xl'>Just provide some basic information, and our trip planner will generate a customized itinerary based on your preferences.</p>
 
-      <div className='mt-20 flex flex-col gap-10'>
-        <div>
-          <h2 className='text-xl my-3 font-medium'>What is your destination of choice?</h2>
-          <GooglePlacesAutocomplete
-            apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
-            selectProps={{
-              value: place,
-              onChange: (v) => {
-                setPlace(v);
-                handleInputChange('location', v);
-              }
-            }}
-            autocompletionRequest={{
-              fields: ['geometry'],
-            }}
-          />
+        <div className='mt-20 flex flex-col gap-10'>
+          <div>
+            <h2 className='text-xl my-3 font-medium'>What is your destination of choice?</h2>
+            <GooglePlacesAutocomplete
+              apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
+              selectProps={{
+                value: place,
+                onChange: (v) => {
+                  setPlace(v);
+                  handleInputChange('location', v);
+                }
+              }}
+              autocompletionRequest={{
+                fields: ['geometry'], // Ensure geometry field is included to get lat/lng
+              }}
+            />
+          </div>
+
+          <div>
+            <h2 className='text-xl my-3 font-medium'>How many days are you planning your trip?</h2>
+            <Input placeholder={'Ex.3'} type="number"
+              onChange={(e) => handleInputChange('noOfDays', e.target.value)} />
+          </div>
+
+          {/* Google Map */}
+          <div className="mt-10">
+            <h2 className='text-xl my-3 font-medium'>Map Preview of Selected Location</h2>
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={mapCenter} // Center the map on the selected place
+              zoom={12} // Adjust zoom level for better clarity
+            >
+              {/* Marker at the selected location */}
+              {place && <Marker position={mapCenter} />}
+            </GoogleMap>
+          </div>
+
         </div>
 
         <div>
-          <h2 className='text-xl my-3 font-medium'>How many days are you planning your trip?</h2>
-          <Input placeholder={'Ex.3'} type="number"
-            onChange={(e) => handleInputChange('noOfDays', e.target.value)} />
+          <h2 className='text-xl my-3 font-medium'>What is Your Budget?</h2>
+          <div className='grid grid-cols-3 gap-5 mt-5'>
+            {SelectBudgetOptions.map((item, index) => (
+              <div key={index}
+                onClick={() => handleInputChange('budget', item.title)}
+                className={`p-4 border cursor-pointer 
+                rounded-lg hover:shadow-lg
+                ${formData?.budget == item.title && 'shadow-lg border-black'}`}>
+                <h2 className='text-4xl'>{item.icon}</h2>
+                <h2 className='font-bold text-lg'>{item.title}</h2>
+                <h2 className='text-sm text-gray-500'>{item.desc}</h2>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <h2 className='text-xl my-3 font-medium'>What is Your Budget?</h2>
-        <div className='grid grid-cols-3 gap-5 mt-5'>
-          {SelectBudgetOptions.map((item, index) => (
-            <div key={index}
-              onClick={() => handleInputChange('budget', item.title)}
-              className={`p-4 border cursor-pointer 
-              rounded-lg hover:shadow-lg
-              ${formData?.budget == item.title && 'shadow-lg border-black'}
-              `}>
-              <h2 className='text-4xl'>{item.icon}</h2>
-              <h2 className='font-bold text-lg'>{item.title}</h2>
-              <h2 className='text-sm text-gray-500'>{item.desc}</h2>
-            </div>
-          ))}
+        <div>
+          <h2 className='text-xl my-3 font-medium'>Who do you plan on traveling with on your next adventure?</h2>
+          <div className='grid grid-cols-3 gap-5 mt-5'>
+            {SelectTravelesList.map((item, index) => (
+              <div key={index}
+                onClick={() => handleInputChange('traveler', item.people)}
+                className={`p-4 border cursor-pointer rounded-lg
+                hover:shadow-lg
+                ${formData?.traveler == item.people && 'shadow-lg border-black'}`}>
+                <h2 className='text-4xl'>{item.icon}</h2>
+                <h2 className='font-bold text-lg'>{item.title}</h2>
+                <h2 className='text-sm text-gray-500'>{item.desc}</h2>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <h2 className='text-xl my-3 font-medium'>Who do you plan on traveling with on your next adventure?</h2>
-        <div className='grid grid-cols-3 gap-5 mt-5'>
-          {SelectTravelesList.map((item, index) => (
-            <div key={index}
-              onClick={() => handleInputChange('traveler', item.people)}
-              className={`p-4 border cursor-pointer rounded-lg
-              hover:shadow-lg
-              ${formData?.traveler == item.people && 'shadow-lg border-black'}
-              `}>
-              <h2 className='text-4xl'>{item.icon}</h2>
-              <h2 className='font-bold text-lg'>{item.title}</h2>
-              <h2 className='text-sm text-gray-500'>{item.desc}</h2>
-            </div>
-          ))}
+        <div className='my-10 justify-end flex'>
+          <Button
+            disabled={loading}
+            onClick={OnGenerateTrip}>
+            {loading ? <AiOutlineLoading3Quarters className='h-7 w-7 animate-spin' /> : 'Generate Trip'}
+          </Button>
         </div>
+
+        <Dialog open={openDailog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogDescription>
+                <img src="/logo.svg" alt="logo" />
+                <h2 className='font-bold text-lg mt-7'>Sign In With Google</h2>
+                <p>Sign in to the App with Google authentication securely</p>
+
+                <Button
+                  onClick={login}
+                  className="w-full mt-5 flex gap-4 items-center">
+                  <FcGoogle className='h-7 w-7' />
+                  Sign In With Google
+                </Button>
+
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      <div className='my-10 justify-end flex'>
-        <Button
-          disabled={loading}
-          onClick={OnGenerateTrip}>
-          {loading ?
-            <AiOutlineLoading3Quarters className='h-7 w-7 animate-spin' /> : 'Generate Trip'
-          }
-        </Button>
-      </div>
-
-      <Dialog open={openDailog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogDescription>
-              <img src="/logo.svg" alt="logo" />
-              <h2 className='font-bold text-lg mt-7'>Sign In With Google</h2>
-              <p>Sign in to the App with Google authentication securely</p>
-
-              <Button
-                onClick={login}
-                className="w-full mt-5 flex gap-4 items-center">
-                <FcGoogle className='h-7 w-7' />
-                Sign In With Google
-              </Button>
-
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-    </div>
     </>
   );
 }
