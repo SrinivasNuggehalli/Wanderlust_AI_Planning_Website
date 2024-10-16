@@ -3,6 +3,7 @@ import { GoogleLogin, googleLogout } from '@react-oauth/google';
 import { Button } from '../ui/button';
 import { jwtDecode } from 'jwt-decode';
 
+
 function Header() {
   const [user, setUser] = useState(null);
 
@@ -34,6 +35,7 @@ function Header() {
     console.log('Login Success:', response);
     const token = response.credential;
     console.log('Token:', token);
+    console.log('Current user state:', user);
     const decoded = jwtDecode(token);
     login(decoded);
   };
