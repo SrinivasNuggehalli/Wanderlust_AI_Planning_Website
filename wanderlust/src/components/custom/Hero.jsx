@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import WeatherWidget from './WeatherWidget';
+import Testimonials from './Testimonials';
+
 
 function Hero() {
   return (
@@ -15,12 +17,18 @@ function Hero() {
           Your personal trip planner and travel curator, creating custom itineraries tailored to your interests and budget.
         </p>
 
+
         <Link to="/create-trip">
           <button className="bg-[#160a09] text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300 text-lg mt-4">
             Get Started, It's Free
           </button>
         </Link>
+
+
+        {/* Testimonials Below the Button */}
+        <Testimonials />
       </div>
+
 
       {/* Right Section: Image and Weather Widget */}
       <div className="flex flex-col lg:w-2/5 mt-8 lg:mt-2">
@@ -34,11 +42,13 @@ function Hero() {
           aria-label="Travel Planning"
         ></div>
 
+
         {/* Weather Widget */}
         <WeatherWidget />
       </div>
     </div>
   );
 }
+
 
 export default Hero;
