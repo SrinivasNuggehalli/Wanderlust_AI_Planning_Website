@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import WeatherWidget from './WeatherWidget';
-import Testimonials from './Testimonials'; // Import Testimonials
+import Testimonials from './Testimonials';
 
 function Hero() {
   return (
@@ -23,7 +23,7 @@ function Hero() {
         </Link>
 
         {/* Testimonials Below the Button */}
-        <Testimonials /> {/* Testimonials is retained */}
+        <Testimonials />
       </div>
 
       {/* Right Section: Image and Weather Widget */}
