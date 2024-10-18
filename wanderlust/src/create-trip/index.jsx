@@ -19,8 +19,6 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
-
-// Import transportation icons
 import { FaPlane, FaTrain, FaCar, FaBus } from 'react-icons/fa';
 
 // Map container style
@@ -56,31 +54,12 @@ function CreateTrip() {
     libraries: ['places'] // Add 'places' for autocomplete
   });
 
-  // Helper function to automatically select transportation based on the number of travelers
-  const suggestTransport = (travelerCount) => {
-    if (travelerCount <= 2) {
-      return "Car";
-    } else if (travelerCount <= 4) {
-      return "Train";
-    } else {
-      return "Bus";
-    }
-  };
-
+  // Handle form data changes
   const handleInputChange = (name, value) => {
     setFormData({
       ...formData,
       [name]: value
     });
-
-    // Automatically set transport based on traveler count
-    if (name === 'traveler') {
-      const suggestedTransport = suggestTransport(value);
-      setFormData(prev => ({
-        ...prev,
-        transport: suggestedTransport
-      }));
-    }
   };
 
   useEffect(() => {
@@ -234,7 +213,7 @@ function CreateTrip() {
               {transportOptions.map((option, index) => (
                 <div key={index}
                   onClick={() => handleInputChange('transport', option.name)} 
-                  className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg transition-all ease-in-out duration-200 transform hover:-translate-y-1 ${formData?.transport === option.name && 'shadow-lg border-black'}`}>
+                  className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg transition-all ease-in-out duration-200 transform hover:-translate-y-1 ${formData?.transport === option.name ? 'shadow-lg border-black' : 'border-gray-300'}`}>
                   <div className="flex items-center gap-4">
                     {option.icon}
                     <h2 className='text-lg font-medium'>{option.name}</h2>
@@ -250,9 +229,7 @@ function CreateTrip() {
               {SelectBudgetOptions.map((item, index) => (
                 <div key={index}
                   onClick={() => handleInputChange('budget', item.title)}
-                  className={`p-4 border cursor-pointer
-                  rounded-lg hover:shadow-lg transition-all ease-in-out duration-200 transform hover:-translate-y-1
-                  ${formData?.budget === item.title && 'shadow-lg border-black'}`}>
+                  className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg transition-all ease-in-out duration-200 transform hover:-translate-y-1 ${formData?.budget === item.title ? 'shadow-lg border-black' : 'border-gray-300'}`}>
                   <h2 className='text-4xl'>{item.icon}</h2>
                   <h2 className='font-bold text-lg'>{item.title}</h2>
                   <h2 className='text-sm text-gray-500'>{item.desc}</h2>
@@ -267,9 +244,7 @@ function CreateTrip() {
               {SelectTravelesList.map((item, index) => (
                 <div key={index}
                   onClick={() => handleInputChange('traveler', item.people)}
-                  className={`p-4 border cursor-pointer rounded-lg
-                  hover:shadow-lg transition-all ease-in-out duration-200 transform hover:-translate-y-1
-                  ${formData?.traveler === item.people && 'shadow-lg border-black'}`}>
+                  className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg transition-all ease-in-out duration-200 transform hover:-translate-y-1 ${formData?.traveler === item.people ? 'shadow-lg border-black' : 'border-gray-300'}`}>
                   <h2 className='text-4xl'>{item.icon}</h2>
                   <h2 className='font-bold text-lg'>{item.title}</h2>
                   <h2 className='text-sm text-gray-500'>{item.desc}</h2>
