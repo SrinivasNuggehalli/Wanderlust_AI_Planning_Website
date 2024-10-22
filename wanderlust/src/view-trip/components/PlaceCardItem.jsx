@@ -1,43 +1,68 @@
-import { Button } from '@/components/ui/button'
-import { GetPlaceDetails, PHOTO_REF_URL } from '@/service/GlobalApi';
-import React, { useEffect, useState } from 'react'
-import { FaMapLocationDot } from "react-icons/fa6";
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { GetPlaceDetails, PHOTO_REF_URL } from '@/service/GlobalApi';
+import { FaMapLocationDot } from 'react-icons/fa6';
+import { Button } from '@/components/ui/button';
 
-function PlaceCardItem({place}) {
+function PlaceCardItem({ place, onSelectPlace, isSelected }) {
+  const [photoUrl, setPhotoUrl] = useState();
 
-  const [photoUrl,setPhotoUrl]=useState();
-  useEffect(()=>{
-    place&&GetPlacePhoto();
-  },[place])
+  useEffect(() => {
+    place && GetPlacePhoto();
+  }, [place]);
 
-  const GetPlacePhoto=async()=>{
-    const data={
-      textQuery:place.placeName
+  const GetPlacePhoto = async () => {
+    const data = {
+      textQuery: place.placeName,
+    };
+    try {
+      const result = await GetPlaceDetails(data);
+      const photoUrl = PHOTO_REF_URL.replace(
+        '{NAME}',
+        result.data.places[0].photos[3].name
+      );
+      setPhotoUrl(photoUrl);
+    } catch (error) {
+      console.error('Error fetching photo:', error);
     }
-    const result=await GetPlaceDetails(data).then(resp=>{
-      const PhotoUrl=PHOTO_REF_URL.replace('{NAME}',resp.data.places[0].photos[3].name);
-      setPhotoUrl(PhotoUrl);
-    })
-  }
+  };
 
   return (
-    <Link to={'https://www.google.com/maps/search/?api=1&query='+place.placeName} target='_blank'>
-        <div className='border rounded-xl p-3 mt-2 flex gap-5 
-        hover:scale-105 transition-all hover:shadow-md cursor-pointer'>
-            <img src={photoUrl?photoUrl:'/placeholder.jpg'}
-            className='w-[130px] h-[130px] rounded-xl object-cover'
-            />
-            <div>
-                <h2 className='font-bold text-lg'>{place.placeName}</h2>
-                <p className='text-sm text-gray-400'>{place.placeDetails}</p>
-                <h2 className='mt-2'>🕙 {place.timeToTravel}</h2>
-                <h2 className='mt-2'>🎟️ {place.ticketPricing}</h2>
-                {/* <Button size="sm"><FaMapLocationDot /></Button> */}
-            </div>
+    <div
+      className={`border rounded-lg p-3 flex gap-4 items-start bg-white
+        hover:scale-105 transition-all hover:shadow-lg cursor-pointer ${
+          isSelected ? 'bg-blue-50 border-blue-400' : 'border-gray-200'
+        }`}
+      onClick={onSelectPlace}
+    >
+      <img
+        src={photoUrl || '/placeholder.jpg'}
+        className='w-36 h-36 rounded-md object-cover'
+        alt={place.placeName}
+      />
+      <div className='flex-1'>
+        <h2 className='font-semibold text-lg text-gray-800 truncate'>
+          {place.placeName}
+        </h2>
+        <p className='text-sm text-gray-500 mt-1 line-clamp-2'>
+          {place.placeDetails}
+        </p>
+        <div className='mt-2'>
+          <h2 className='text-sm text-gray-600'>🕙 {place.timeToTravel}</h2>
+          <h2 className='text-sm text-gray-600'>🎟️ {place.ticketPricing}</h2>
         </div>
-    </Link>
-  )
+        <Button
+          size='sm'
+          className={`mt-3 flex items-center gap-2 ${
+            isSelected ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+          } text-white`}
+        >
+          <FaMapLocationDot className='w-4 h-4' />
+          {isSelected ? 'Deselect' : 'Select'}
+        </Button>
+      </div>
+    </div>
+  );
 }
 
-export default PlaceCardItem
+export default PlaceCardItem;

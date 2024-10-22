@@ -1,6 +1,5 @@
 import React from 'react';
-import { UserCircle2 } from 'lucide-react'; // Use an icon from Lucide (Shadcn UI)
-
+import { UserCircle2 } from 'lucide-react'; 
 
 const testimonials = [
   {

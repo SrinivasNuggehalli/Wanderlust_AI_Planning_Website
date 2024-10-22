@@ -1,39 +1,63 @@
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { GetPlaceDetails, PHOTO_REF_URL } from '@/service/GlobalApi';
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 
-function HotelCardItem({ hotel }) {
+function HotelCardItem({ hotel, isSelected, onSelect }) {
+  const [photoUrl, setPhotoUrl] = useState();
 
-    const [photoUrl,setPhotoUrl]=useState();
-  useEffect(()=>{
-    hotel&&GetPlacePhoto();
-  },[hotel])
+  useEffect(() => {
+    hotel && GetPlacePhoto();
+  }, [hotel]);
 
-  const GetPlacePhoto=async()=>{
-    const data={
-      textQuery:hotel?.hotelName
+  const GetPlacePhoto = async () => {
+    const data = {
+      textQuery: hotel?.hotelName,
+    };
+    try {
+      const result = await GetPlaceDetails(data);
+      const photoUrl = PHOTO_REF_URL.replace(
+        '{NAME}',
+        result.data.places[0].photos[3].name
+      );
+      setPhotoUrl(photoUrl);
+    } catch (error) {
+      console.error('Error fetching photo:', error);
     }
-    const result=await GetPlaceDetails(data).then(resp=>{
-      console.log(resp.data.places[0].photos[3].name);
+  };
 
-      const PhotoUrl=PHOTO_REF_URL.replace('{NAME}',resp.data.places[0].photos[3].name);
-      setPhotoUrl(PhotoUrl);
-    })
-  }
-    return (
-        <Link to={'https://www.google.com/maps/search/?api=1&query=' + hotel.hotelName + "," + hotel?.hotelAddress} target='_blank' >
-            <div className='hover:scale-105 transition-all cursor-pointer'>
-                <img src={photoUrl?photoUrl:'/placeholder.jpg'} className='rounded-xl h-[180px] w-full object-cover' />
-                <div className='my-2 flex flex-col gap-2'>
-                    <h2 className='font-medium '>{hotel?.hotelName}</h2>
-                    <h2 className='text-xs text-gray-500 '>📍 {hotel?.hotelAddress}</h2>
-                    <h2 className='text-sm'>💰 {hotel?.price}</h2>
-                    <h2 className='text-sm'>⭐ {hotel?.rating}</h2>
-
-                </div>
-            </div>
-        </Link>
-    )
+  return (
+    <div
+      className={`relative p-4 bg-white rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 ${
+        isSelected ? 'border-4 border-blue-600 shadow-lg' : 'border border-gray-200'
+      }`}
+    >
+      <Link
+        to={`https://www.google.com/maps/search/?api=1&query=${hotel.hotelName},${hotel?.hotelAddress}`}
+        target='_blank'
+        className="block"
+      >
+        <img
+          src={photoUrl ? photoUrl : '/placeholder.jpg'}
+          className='rounded-lg h-[180px] w-full object-cover'
+          alt={hotel?.hotelName}
+        />
+      </Link>
+      <div className='mt-3'>
+        <h2 className='font-semibold text-lg truncate'>{hotel?.hotelName}</h2>
+        <p className='text-xs text-gray-500 truncate'>📍 {hotel?.hotelAddress}</p>
+        <p className='text-sm mt-1'>💰 {hotel?.price}</p>
+        <p className='text-sm'>⭐ {hotel?.rating}</p>
+      </div>
+      <button
+        onClick={onSelect}
+        className={`mt-4 w-full py-2 rounded text-sm font-medium transition-colors ${
+          isSelected ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+        } text-white`}
+      >
+        {isSelected ? 'Deselect' : 'Select'}
+      </button>
+    </div>
+  );
 }
 
-export default HotelCardItem
+export default HotelCardItem;
