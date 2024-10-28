@@ -35,43 +35,124 @@ const transportOptions = [
   { name: "Bus", icon: <FaBus className="text-4xl text-red-500" /> },
 ];
 
+// Validation constants
+const VALIDATION_RULES = {
+  MIN_DAYS: 1,
+  MAX_DAYS: 15,
+  REQUIRED_FIELDS: ['location', 'noOfDays', 'budget', 'traveler', 'transport']
+};
+
 function CreateTrip() {
-  const [place, setPlace] = useState();
+  const [place, setPlace] = useState(null);
   const [formData, setFormData] = useState({});
+  const [formErrors, setFormErrors] = useState({});
   const [openDailog, setOpenDailog] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Initialize Google login hook
+  const googleLogin = useGoogleLogin({
+    onSuccess: (codeResp) => GetUserProfile(codeResp),
+    onError: (error) => {
+      console.log(error);
+      toast.error("Failed to login with Google");
+    }
+  });
+
   // State for map center coordinates
   const [mapCenter, setMapCenter] = useState({
-    lat: 37.7749, // Default center: San Francisco
+    lat: 37.7749,
     lng: -122.4194
   });
 
   // Load Google Maps Script
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_PLACE_API_KEY, // Ensure API key is correctly loaded
-    libraries: ['places'] // Add 'places' for autocomplete
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_PLACE_API_KEY,
+    libraries: ['places']
   });
 
-  // Handle form data changes
-  const handleInputChange = (name, value) => {
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+  // Validate single field
+  const validateField = (name, value) => {
+    let error = '';
+    
+    switch (name) {
+      case 'noOfDays':
+        const days = parseInt(value);
+        if (isNaN(days)) {
+          error = 'Please enter a valid number';
+        } else if (days < VALIDATION_RULES.MIN_DAYS || days > VALIDATION_RULES.MAX_DAYS) {
+          error = `Please enter between ${VALIDATION_RULES.MIN_DAYS} and ${VALIDATION_RULES.MAX_DAYS} days`;
+        }
+        break;
+      case 'location':
+        if (!value?.label) {
+          error = 'Please select a valid location';
+        }
+        break;
+      case 'budget':
+        if (!SelectBudgetOptions.some(option => option.title === value)) {
+          error = 'Please select a valid budget option';
+        }
+        break;
+      case 'traveler':
+        if (!SelectTravelesList.some(option => option.people === value)) {
+          error = 'Please select a valid traveler option';
+        }
+        break;
+      case 'transport':
+        if (!transportOptions.some(option => option.name === value)) {
+          error = 'Please select a valid transport option';
+        }
+        break;
+    }
+    
+    return error;
   };
 
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
+  // Handle form data changes with validation
+  const handleInputChange = (name, value) => {
+    const error = validateField(name, value);
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    setFormErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
+  };
 
-  const login = useGoogleLogin({
-    onSuccess: (codeResp) => GetUserProfile(codeResp),
-    onError: (error) => console.log(error)
-  });
+  // Validate entire form
+  const validateForm = () => {
+    const errors = {};
+    let isValid = true;
+
+    VALIDATION_RULES.REQUIRED_FIELDS.forEach(field => {
+      const value = formData[field];
+      if (!value) {
+        errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        isValid = false;
+      } else {
+        const error = validateField(field, value);
+        if (error) {
+          errors[field] = error;
+          isValid = false;
+        }
+      }
+    });
+
+    setFormErrors(errors);
+    return isValid;
+  };
 
   const OnGenerateTrip = async () => {
+    if (!validateForm()) {
+      toast.error("Please fix the errors in the form");
+      return;
+    }
+
     setLoading(true);
 
     const user = localStorage.getItem('user');
@@ -81,28 +162,19 @@ function CreateTrip() {
       return;
     }
 
-    if (!formData?.location || formData?.noOfDays > 30 || !formData?.budget || !formData?.traveler || !formData?.transport) {
-      toast("Please fill all details");
-      setLoading(false);
-      return;
-    }
-
     const FINAL_PROMPT = AI_PROMPT
       .replace('{location}', formData?.location?.label)
       .replace('{totalDays}', formData?.noOfDays)
       .replace('{traveler}', formData?.traveler)
       .replace('{budget}', formData?.budget)
-      .replace('{transport}', formData?.transport); // Include transport in AI prompt
-
-    console.log(FINAL_PROMPT);
+      .replace('{transport}', formData?.transport);
 
     try {
       const result = await chatSession.sendMessage(FINAL_PROMPT);
-      console.log("--", result?.response?.text());
-      SaveAiTrip(result?.response?.text());
+      await SaveAiTrip(result?.response?.text());
     } catch (error) {
       console.error("Error in generating trip:", error);
-      toast("Failed to generate the trip.");
+      toast.error("Failed to generate the trip.");
     } finally {
       setLoading(false);
     }
@@ -122,13 +194,13 @@ function CreateTrip() {
         userEmail: user?.email,
         id: docId
       });
-      toast("Trip saved successfully.");
+      toast.success("Trip saved successfully.");
+      navigate('/view-trip/' + docId);
     } catch (error) {
       console.error("Error saving trip:", error);
-      toast("Failed to save trip.");
+      toast.error("Failed to save trip.");
     } finally {
       setLoading(false);
-      navigate('/view-trip/' + docId);
     }
   };
 
@@ -139,13 +211,13 @@ function CreateTrip() {
         Accept: 'Application/json'
       }
     }).then((resp) => {
-      console.log(resp);
       localStorage.setItem('user', JSON.stringify(resp.data));
+      window.dispatchEvent(new Event('userLogin'));
       setOpenDailog(false);
       OnGenerateTrip();
     }).catch(error => {
       console.error("Error fetching user profile:", error);
-      toast("Failed to log in.");
+      toast.error("Failed to log in.");
     });
   };
 
@@ -154,13 +226,12 @@ function CreateTrip() {
     if (place?.value?.geometry?.location) {
       const { lat, lng } = place.value.geometry.location;
       setMapCenter({
-        lat: lat(), // Use the function returned by Google Places API for lat/lng
+        lat: lat(),
         lng: lng()
       });
     }
   }, [place]);
 
-  // Render loading state if the Google Maps script is not yet loaded
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
@@ -182,31 +253,39 @@ function CreateTrip() {
                 }
               }}
               autocompletionRequest={{
-                fields: ['geometry'], // Ensure geometry field is included to get lat/lng
+                fields: ['geometry'],
               }}
             />
+            {formErrors.location && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.location}</p>
+            )}
           </div>
 
           <div>
             <h2 className='text-xl my-3 font-medium'>How many days are you planning your trip?</h2>
-            <Input placeholder={'Ex.3'} type="number"
-              onChange={(e) => handleInputChange('noOfDays', e.target.value)} />
+            <Input 
+              placeholder={'Enter number of days (1-15)'} 
+              type="number"
+              min={VALIDATION_RULES.MIN_DAYS}
+              max={VALIDATION_RULES.MAX_DAYS}
+              onChange={(e) => handleInputChange('noOfDays', e.target.value)}
+            />
+            {formErrors.noOfDays && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.noOfDays}</p>
+            )}
           </div>
 
-          {/* Google Map */}
           <div className="mt-10">
             <h2 className='text-xl my-3 font-medium'>Map Preview of Selected Location</h2>
             <GoogleMap
               mapContainerStyle={containerStyle}
-              center={mapCenter} // Center the map on the selected place
-              zoom={12} // Adjust zoom level for better clarity
+              center={mapCenter}
+              zoom={12}
             >
-              {/* Marker at the selected location */}
               {place && <Marker position={mapCenter} />}
             </GoogleMap>
           </div>
 
-          {/* Transportation Selection */}
           <div>
             <h2 className='text-xl my-3 font-medium'>Preferred Mode of Transportation</h2>
             <div className='grid grid-cols-2 gap-5 mt-5'>
@@ -221,6 +300,9 @@ function CreateTrip() {
                 </div>
               ))}
             </div>
+            {formErrors.transport && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.transport}</p>
+            )}
           </div>
 
           <div>
@@ -236,6 +318,9 @@ function CreateTrip() {
                 </div>
               ))}
             </div>
+            {formErrors.budget && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.budget}</p>
+            )}
           </div>
 
           <div>
@@ -251,8 +336,10 @@ function CreateTrip() {
                 </div>
               ))}
             </div>
+            {formErrors.traveler && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.traveler}</p>
+            )}
           </div>
-
         </div>
 
         <div className='my-10 justify-end flex'>
@@ -272,7 +359,7 @@ function CreateTrip() {
                 <p>Sign in to the App with Google authentication securely</p>
 
                 <Button
-                  onClick={login}
+                  onClick={() => googleLogin()}
                   className="w-full mt-5 flex gap-4 items-center">
                   <FcGoogle className='h-7 w-7' />
                   Sign In With Google

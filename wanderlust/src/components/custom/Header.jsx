@@ -2,48 +2,60 @@ import React, { useState, useEffect } from 'react';
 import { GoogleLogin, googleLogout } from '@react-oauth/google';
 import { Button } from '../ui/button';
 import { jwtDecode } from 'jwt-decode';
-
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for existing user data in localStorage on component mount
+    // Add event listener for storage changes
+    const handleStorageChange = () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        setUser(null);
+      }
+    };
+
+    // Check for existing user data on mount
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+
+    // Listen for storage changes
+    window.addEventListener('storage', handleStorageChange);
+    // Also listen for custom event
+    window.addEventListener('userLogin', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLogin', handleStorageChange);
+    };
   }, []);
 
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
+    // Dispatch custom event
+    window.dispatchEvent(new Event('userLogin'));
   };
 
   const logout = () => {
     googleLogout();
     setUser(null);
-    console.log(localStorage.getItem('user'))
     localStorage.removeItem('user');
-    console.log('Logged out');
     localStorage.removeItem('Token');
-    // Force a re-render by updating a timestamp
-    setUser({ loggedOut: new Date().getTime() });
+    navigate('/');
   };
 
   const handleLoginSuccess = (response) => {
-    console.log('Login Success:', response);
     const token = response.credential;
-    console.log('Token:', token);
-    console.log('Current user state:', user);
     const decoded = jwtDecode(token);
     login(decoded);
   };
-
-  // Debug logging
-  useEffect(() => {
-    console.log('Current user state:', user);
-  }, [user]);
 
   return (
     <div className='p-3 shadow-sm flex justify-between items-center px-5'>
@@ -53,7 +65,7 @@ function Header() {
       </div>
 
       <div>
-        {!user || user.loggedOut ? (
+        {!user ? (
           <GoogleLogin
             onSuccess={handleLoginSuccess}
             onError={(error) => {
