@@ -71,6 +71,37 @@ function CreateTrip() {
     libraries: ['places']
   });
 
+  // Handle place selection and update map center
+  const handlePlaceSelect = async (selectedPlace) => {
+    setPlace(selectedPlace);
+    
+    if (selectedPlace?.value?.place_id) {
+      // Create a Places service instance
+      const placesService = new window.google.maps.places.PlacesService(document.createElement('div'));
+      
+      // Get place details including geometry
+      placesService.getDetails(
+        {
+          placeId: selectedPlace.value.place_id,
+          fields: ['geometry']
+        },
+        (placeResult, status) => {
+          if (status === 'OK' && placeResult.geometry?.location) {
+            const newCenter = {
+              lat: placeResult.geometry.location.lat(),
+              lng: placeResult.geometry.location.lng()
+            };
+            setMapCenter(newCenter);
+            handleInputChange('location', selectedPlace);
+          } else {
+            console.error('Error fetching place details:', status);
+            toast.error('Failed to load location details');
+          }
+        }
+      );
+    }
+  };
+
   // Validate single field
   const validateField = (name, value) => {
     let error = '';
@@ -221,17 +252,6 @@ function CreateTrip() {
     });
   };
 
-  // Update map center when a place is selected
-  useEffect(() => {
-    if (place?.value?.geometry?.location) {
-      const { lat, lng } = place.value.geometry.location;
-      setMapCenter({
-        lat: lat(),
-        lng: lng()
-      });
-    }
-  }, [place]);
-
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
@@ -247,13 +267,10 @@ function CreateTrip() {
               apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
               selectProps={{
                 value: place,
-                onChange: (v) => {
-                  setPlace(v);
-                  handleInputChange('location', v);
-                }
+                onChange: handlePlaceSelect
               }}
               autocompletionRequest={{
-                fields: ['geometry'],
+                fields: ['geometry', 'place_id'],
               }}
             />
             {formErrors.location && (
@@ -282,10 +299,13 @@ function CreateTrip() {
               center={mapCenter}
               zoom={12}
             >
-              {place && <Marker position={mapCenter} />}
+              <Marker position={mapCenter} />
             </GoogleMap>
           </div>
 
+          {/* Rest of the component remains the same */}
+          
+          {/* Transportation options */}
           <div>
             <h2 className='text-xl my-3 font-medium'>Preferred Mode of Transportation</h2>
             <div className='grid grid-cols-2 gap-5 mt-5'>
@@ -305,6 +325,7 @@ function CreateTrip() {
             )}
           </div>
 
+          {/* Budget options */}
           <div>
             <h2 className='text-xl my-3 font-medium'>What is Your Budget?</h2>
             <div className='grid grid-cols-3 gap-5 mt-5'>
@@ -323,6 +344,7 @@ function CreateTrip() {
             )}
           </div>
 
+          {/* Travelers options */}
           <div>
             <h2 className='text-xl my-3 font-medium'>Who do you plan on traveling with on your next adventure?</h2>
             <div className='grid grid-cols-3 gap-5 mt-5'>
