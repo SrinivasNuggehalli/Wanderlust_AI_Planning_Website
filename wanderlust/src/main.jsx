@@ -8,6 +8,7 @@ import Header from './components/custom/Header.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Toaster } from './components/ui/sonner';
 import Viewtrip from './view-trip/[tripId]/index.jsx';
+import MyTrips from './my-trips/index.jsx'
 
 // Root layout component that includes Header and Outlet for child routes
 const RootLayout = () => {
@@ -36,7 +37,12 @@ const router = createBrowserRouter([
       {
         path: '/view-trip/:tripId',
         element: <Viewtrip />
+      },
+      {
+        path:'/my-trips',
+        element:<MyTrips/>
       }
+      
     ]
   }
 ]);
