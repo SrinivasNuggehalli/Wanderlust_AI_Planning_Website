@@ -38,9 +38,9 @@ jobs:
 
       - name: Create .env.local file
         run: |
-          echo "VITE_GOOGLE_PLACE_API_KEY=${{ secrets.VITE_GOOGLE_PLACE_API_KEY }}" > src/.env.local
-          echo "VITE_GOOGLE_AUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}" >> src/.env.local
-          echo "VITE_GOOGLE_GEMINI_AI_API_KEY=${{ secrets.VITE_GOOGLE_GEMINI_AI_API_KEY }}" >> src/.env.local
+          echo "VITE_GOOGLE_PLACE_API_KEY=${{ secrets.VITE_GOOGLE_PLACE_API_KEY }}" > wanderlust/src/.env.local
+          echo "VITE_GOOGLE_AUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}" >> wanderlust/src/.env.local
+          echo "VITE_GOOGLE_GEMINI_AI_API_KEY=${{ secrets.VITE_GOOGLE_GEMINI_AI_API_KEY }}" >> wanderlust/src/.env.local
 
       - name: Run the application
         run: npm run dev
