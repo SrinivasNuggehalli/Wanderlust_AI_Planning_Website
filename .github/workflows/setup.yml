@@ -43,6 +43,10 @@ jobs:
           echo "VITE_GOOGLE_AUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}" >> wanderlust/src/.env.local
           echo "VITE_GOOGLE_GEMINI_AI_API_KEY=${{ secrets.VITE_GOOGLE_GEMINI_AI_API_KEY }}" >> wanderlust/src/.env.local
 
-      - name: Run the Vite development server
+      - name: Build the Vite project
         working-directory: wanderlust
-        run: npm run dev
+        run: npm run build
+
+      - name: Preview the Vite project
+        working-directory: wanderlust
+        run: npm run preview
