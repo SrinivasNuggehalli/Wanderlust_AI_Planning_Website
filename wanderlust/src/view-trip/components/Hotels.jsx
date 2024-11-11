@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import HotelCardItem from './HotelCardItem';
 
-function Hotels({ trip }) {
+function Hotels({ trip, onSelectHotel, selectedHotels }) {
   const [hotels, setHotels] = useState([]);
-  const [selectedHotels, setSelectedHotels] = useState([]);
 
   useEffect(() => {
     if (trip?.tripData?.hotels) {
       setHotels(trip.tripData.hotels);
     }
   }, [trip]);
-
-  const handleSelectHotel = (hotel) => {
-    setSelectedHotels((prevSelected) =>
-      prevSelected.some((h) => h.hotelName === hotel.hotelName)
-        ? prevSelected.filter((h) => h.hotelName !== hotel.hotelName)
-        : [...prevSelected, hotel]
-    );
-  };
 
   return (
     <div className='hotel-section p-5'>
@@ -29,7 +20,7 @@ function Hotels({ trip }) {
             key={index}
             hotel={hotel}
             isSelected={selectedHotels.some((h) => h.hotelName === hotel.hotelName)}
-            onSelect={() => handleSelectHotel(hotel)}
+            onSelect={() => onSelectHotel(hotel)}
           />
         ))}
       </div>

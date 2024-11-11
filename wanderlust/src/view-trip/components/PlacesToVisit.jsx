@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
 import PlaceCardItem from './PlaceCardItem';
 
-function PlacesToVisit({ trip }) {
-  const [selectedPlaces, setSelectedPlaces] = useState([]);
-
-  const handleSelectPlace = (place) => {
-    setSelectedPlaces((prevSelected) =>
-      prevSelected.some((p) => p.placeName === place.placeName)
-        ? prevSelected.filter((p) => p.placeName !== place.placeName) 
-        : [...prevSelected, place] 
-    );
-  };
-
+function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
   return (
     <div className='p-5'>
       <h2 className='font-bold text-xl'>Places to Visit</h2>
@@ -26,7 +16,7 @@ function PlacesToVisit({ trip }) {
                   <h2 className='font-medium text-sm text-orange-600'>{place.time}</h2>
                   <PlaceCardItem
                     place={place}
-                    onSelectPlace={() => handleSelectPlace(place)}
+                    onSelectPlace={() => onSelectPlace(place)}
                     isSelected={selectedPlaces.some((p) => p.placeName === place.placeName)}
                   />
                 </div>
