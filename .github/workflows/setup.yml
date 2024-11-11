@@ -22,6 +22,7 @@ jobs:
           node-version: '18'
 
       - name: Install project dependencies
+        working-directory: wanderlust
         run: |
           npm install @googlemaps/google-maps-services-js --save
           npm install @react-oauth/google@latest
@@ -42,5 +43,6 @@ jobs:
           echo "VITE_GOOGLE_AUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}" >> wanderlust/src/.env.local
           echo "VITE_GOOGLE_GEMINI_AI_API_KEY=${{ secrets.VITE_GOOGLE_GEMINI_AI_API_KEY }}" >> wanderlust/src/.env.local
 
-      - name: Run the application
+      - name: Run the Vite development server
+        working-directory: wanderlust
         run: npm run dev
