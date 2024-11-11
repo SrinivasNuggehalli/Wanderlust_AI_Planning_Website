@@ -1,0 +1,46 @@
+name: Setup Wanderlust_AI Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install project dependencies
+        run: |
+          npm install @googlemaps/google-maps-services-js --save
+          npm install @react-oauth/google@latest
+          npm uninstall react-google-login
+          npx shadcn@latest add sonner
+          npx shadcn@latest add toast
+          npm install @google/generative-ai
+          npx shadcn@latest add dialog
+          npm install react-icons
+          npm install firebase
+          npm install -g firebase-tools
+          npm install
+          npm install @react-google-maps/api
+
+      - name: Create .env.local file
+        run: |
+          echo "VITE_GOOGLE_PLACE_API_KEY=${{ secrets.VITE_GOOGLE_PLACE_API_KEY }}" > src/.env.local
+          echo "VITE_GOOGLE_AUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}" >> src/.env.local
+          echo "VITE_GOOGLE_GEMINI_AI_API_KEY=${{ secrets.VITE_GOOGLE_GEMINI_AI_API_KEY }}" >> src/.env.local
+
+      - name: Run the application
+        run: npm run dev
