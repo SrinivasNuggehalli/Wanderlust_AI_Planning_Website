@@ -46,7 +46,3 @@ jobs:
       - name: Build the Vite project
         working-directory: wanderlust
         run: npm run build
-
-      - name: Preview the Vite project with timeout
-        working-directory: wanderlust
-        run: timeout 30 npm run preview
