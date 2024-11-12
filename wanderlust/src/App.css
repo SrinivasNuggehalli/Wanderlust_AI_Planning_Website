@@ -39,20 +39,21 @@
   color: #888;
 }
 .flight-section a {
-  background: linear-gradient(to right, #6a0dad, #00c6ff); /* Deep purple to teal */
+  background: linear-gradient(to right, #28a745, #00c853); /* Green gradient */
   color: white;
   padding: 10px 18px;
   border-radius: 8px;
   font-weight: bold;
   text-align: center;
   text-decoration: none;
-  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
 }
 
 .flight-section a:hover {
-  background: linear-gradient(to right, #00c6ff, #6a0dad); /* Reverse gradient */
-  transform: translateY(-3px); /* Subtle lift effect */
-  box-shadow: 0 8px 16px rgba(0, 198, 255, 0.4), 0 4px 8px rgba(106, 13, 173, 0.3); /* Glow-like shadow */
+  background: linear-gradient(to right, #00c853, #28a745); /* Reverse gradient */
+  transform: translateY(-5px); /* Slight lift effect */
+  box-shadow: 0 8px 20px rgba(0, 200, 83, 0.4), 0 4px 12px rgba(40, 167, 69, 0.3); /* Glow and depth */
+  filter: brightness(1.2); /* Brighten on hover for more impact */
 }
 
 .flight-section .flex a:not(:last-child) {
