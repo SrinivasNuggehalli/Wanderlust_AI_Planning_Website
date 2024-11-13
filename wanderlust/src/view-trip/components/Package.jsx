@@ -58,11 +58,11 @@ function Packages({ trip, selectedPackages, onAddPackageToItinerary, onRemovePac
 
       {/* Modal to show selected package details */}
       {selectedPackage && (
-        <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="modal-content bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 text-center">
+        <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="modal-content bg-white p-6 rounded-lg shadow-lg max-w-lg w-full mx-4 md:mx-0 text-center relative">
             <h2 className="text-2xl font-bold mb-4">{selectedPackage.packageName}</h2>
             <p className="mb-4">{selectedPackage.description}</p>
-            <p className="text-gray-700 mb-2">Duration: {selectedPackage.duration}</p>
+            <p className="text-gray-700 mb-2">Duration: {selectedPackage.duration || "N/A"}</p>
             <p className="text-gray-700 mb-4">Price: ${selectedPackage.price}</p>
             <ul className="text-left mb-4">
               <li className="font-semibold">Activities:</li>
