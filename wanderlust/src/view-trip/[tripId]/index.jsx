@@ -107,7 +107,7 @@ function Viewtrip() {
           Discover Our Curated Travel Packages Just for You!
         </h2>
         <p className="text-center text-gray-600 mb-8">
-          Enhance your travel experience with specially designed packages tailored to your destination. Choose the one that best suits your adventure spirit and make it part of your itinerary!
+          <h1 className="text-xl font-bold text-center text-gray-600 mb-6">Featured Packages ! </h1>
         </p>
       {/* Packages Section */}
       <Package
