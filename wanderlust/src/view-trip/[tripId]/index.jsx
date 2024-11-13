@@ -9,16 +9,18 @@ import PlacesToVisit from '../components/PlacesToVisit';
 import Footer from '../components/Footer';
 import BookingAndDownload from '../../components/ui/BookingAndDownload';
 import Flights from '../components/Flights';
+import Package from '../components/Package';
 
 function Viewtrip() {
   const { tripId } = useParams();
   const [trip, setTrip] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // State for selected hotels, places, and flights
+  // State for selected hotels, places, flights, and packages
   const [selectedHotels, setSelectedHotels] = useState([]);
   const [selectedPlaces, setSelectedPlaces] = useState([]);
   const [selectedFlights, setSelectedFlights] = useState([]);
+  const [selectedPackages, setSelectedPackages] = useState([]);
 
   useEffect(() => {
     if (tripId) {
@@ -47,7 +49,23 @@ function Viewtrip() {
     }
   };
 
-  // Selection handlers
+  // Add selected package to itinerary
+  const handleAddPackageToItinerary = (pkg) => {
+    setSelectedPackages((prevPackages) =>
+      prevPackages.some((p) => p.packageName === pkg.packageName)
+        ? prevPackages // Keep it the same if already selected
+        : [...prevPackages, pkg]
+    );
+  };
+
+  // Remove selected package from itinerary
+  const handleRemovePackageFromItinerary = (pkg) => {
+    setSelectedPackages((prevPackages) =>
+      prevPackages.filter((p) => p.packageName !== pkg.packageName)
+    );
+  };
+
+  // Selection handlers for hotels, places, and flights
   const handleSelectHotel = (hotel) => {
     setSelectedHotels((prevSelected) =>
       prevSelected.some((h) => h.hotelName === hotel.hotelName)
@@ -84,6 +102,21 @@ function Viewtrip() {
     <div className='p-10 md:px-20 lg:px-44 xl:px-56'>
       {/* Information Section */}
       <InfoSection trip={trip} />
+      <section className="mt-10">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          Discover Our Curated Travel Packages Just for You!
+        </h2>
+        <p className="text-center text-gray-600 mb-8">
+          Enhance your travel experience with specially designed packages tailored to your destination. Choose the one that best suits your adventure spirit and make it part of your itinerary!
+        </p>
+      {/* Packages Section */}
+      <Package
+        trip={trip} 
+        selectedPackages={selectedPackages} // Pass selected packages to manage button state
+        onAddPackageToItinerary={handleAddPackageToItinerary} 
+        onRemovePackageFromItinerary={handleRemovePackageFromItinerary} 
+      />
+      </section>
 
       {/* Hotels Section */}
       <Hotels 
@@ -111,6 +144,7 @@ function Viewtrip() {
         selectedHotels={selectedHotels} 
         selectedPlaces={selectedPlaces} 
         selectedFlights={selectedFlights}
+        selectedPackages={selectedPackages} // Pass selected packages for download
       />
 
       {/* Footer */}
