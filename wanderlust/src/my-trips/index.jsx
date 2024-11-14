@@ -1,5 +1,5 @@
 import { db } from '@/service/firebaseConfig';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, addDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserTripCardItem from './components/UserTripCardItem';
@@ -9,6 +9,9 @@ function MyTrips() {
   const [userTrips, setUserTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showFeedbackSection, setShowFeedbackSection] = useState(false);
+
+  const [feedback, setFeedback] = useState('');
+  const [rating, setRating] = useState(1);
 
   useEffect(() => {
     GetUserTrips();
@@ -46,6 +49,39 @@ function MyTrips() {
     }
   };
 
+  const handleFeedbackChange = (e) => {
+    setFeedback(e.target.value);
+  };
+
+  const handleRatingChange = (e) => {
+    setRating(e.target.value);
+  };
+
+  const handleSubmitFeedback = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+      alert('Please log in to submit feedback.');
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, 'feedback'), {
+        userEmail: user.email,
+        feedback,
+        rating: parseInt(rating, 10),
+        tripId: 'some_trip_id', // You may want to associate the feedback with a specific trip
+        timestamp: new Date(),
+      });
+
+      setFeedback('');
+      setRating(1);
+      alert('Feedback submitted successfully!');
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert('Failed to submit feedback. Please try again later.');
+    }
+  };
+
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10">
       <h2 className="font-bold text-3xl">My Trips</h2>
@@ -75,6 +111,8 @@ function MyTrips() {
             placeholder="Your comments..."
             className="w-full p-2 mt-2 bg-gray-100 text-gray-800 rounded-md border border-gray-300 focus:ring-2 focus:ring-teal-400 transition ease-in-out duration-300"
             rows="2"
+            value={feedback}
+            onChange={handleFeedbackChange}
           />
           <input
             type="number"
@@ -82,9 +120,12 @@ function MyTrips() {
             min="1"
             max="5"
             className="w-full p-2 mt-2 bg-gray-100 text-gray-800 rounded-md border border-gray-300 focus:ring-2 focus:ring-teal-400 transition ease-in-out duration-300"
+            value={rating}
+            onChange={handleRatingChange}
           />
           <button
             className="mt-3 bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-3 rounded-md w-full transition ease-in-out transform hover:scale-105 hover:shadow-md"
+            onClick={handleSubmitFeedback}
           >
             Submit Feedback
           </button>
