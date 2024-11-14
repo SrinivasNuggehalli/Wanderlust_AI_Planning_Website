@@ -27,24 +27,23 @@ jobs:
       - name: Cache node modules
         uses: actions/cache@v2
         with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          path: wanderlust/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('wanderlust/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-      # Step 4: Install dependencies
+      # Step 4: Change to the wanderlust directory
+      - name: Change directory to wanderlust
+        run: cd wanderlust
+
+      # Step 5: Install dependencies
       - name: Install dependencies
+        working-directory: wanderlust
         run: |
           npm install
 
-      # Step 5: Run tests for all test files
+      # Step 6: Run tests for specific components
       - name: Run tests for BookingAndDownload, FlightCardItem, and Flights components
+        working-directory: wanderlust
         run: |
-          npm test -- BookingAndDownload.test.js
-          npm test -- FlightCardItem.test.js
-          npm test -- Flights.test.js
-
-      # Optional: You can run all tests if you prefer
-      # - name: Run all tests
-      #   run: |
-      #     npm test
+          npm test -- BookingAndDownload.test.js FlightCardItem.test.js Flights.test.js
