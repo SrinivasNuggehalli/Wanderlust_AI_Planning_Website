@@ -27,6 +27,9 @@ npm install react-icons
 npm install firebase
 npm install -g firebase-tools
 
+# Install the required testing libraries
+npm install --save-dev @testing-library/react @testing-library/jest-dom jest babel-jest jest-environment-jsdom
+
 ```
 
 Install Dependencies
