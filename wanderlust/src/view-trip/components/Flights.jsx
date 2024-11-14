@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import FlightCardItem from './FlightCardItem';
 function Flights({ trip, onSelectFlight, selectedFlights }) {
   const [flights, setFlights] = useState([]);
 
