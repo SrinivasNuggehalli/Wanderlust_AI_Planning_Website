@@ -65,15 +65,15 @@ function MyTrips() {
         )}
       </div>
 
-      {/* Compact Feedback Section */}
+      {/* White Background Feedback Section */}
       {showFeedbackSection && (
-        <div className="fixed bottom-4 right-4 bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-lg p-3 w-64 rounded-lg transition-transform duration-500 ease-in-out">
+        <div className="fixed bottom-4 right-4 bg-white text-gray-800 shadow-lg p-3 w-64 rounded-lg border border-gray-300 transition-transform duration-500 ease-in-out">
           <h3 className="font-bold text-base">Share Your Experience</h3>
-          <p className="text-sm text-gray-200 mt-1">Tell us about your trip, or leave a quick rating below!</p>
+          <p className="text-sm text-gray-600 mt-1">Tell us about your trip, or leave a quick rating below!</p>
           
           <textarea
             placeholder="Your comments..."
-            className="w-full p-2 mt-2 bg-white text-gray-800 rounded-md border-0 focus:ring-2 focus:ring-teal-400 transition ease-in-out duration-300"
+            className="w-full p-2 mt-2 bg-gray-100 text-gray-800 rounded-md border border-gray-300 focus:ring-2 focus:ring-teal-400 transition ease-in-out duration-300"
             rows="2"
           />
           <input
@@ -81,10 +81,10 @@ function MyTrips() {
             placeholder="Rating (1-5)"
             min="1"
             max="5"
-            className="w-full p-2 mt-2 bg-white text-gray-800 rounded-md border-0 focus:ring-2 focus:ring-teal-400 transition ease-in-out duration-300"
+            className="w-full p-2 mt-2 bg-gray-100 text-gray-800 rounded-md border border-gray-300 focus:ring-2 focus:ring-teal-400 transition ease-in-out duration-300"
           />
           <button
-            className="mt-3 bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-3 rounded-md w-full transition ease-in-out transform hover:scale-105 hover:shadow-md"
+            className="mt-3 bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-3 rounded-md w-full transition ease-in-out transform hover:scale-105 hover:shadow-md"
           >
             Submit Feedback
           </button>
