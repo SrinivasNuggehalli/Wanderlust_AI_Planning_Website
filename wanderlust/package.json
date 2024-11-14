@@ -11,7 +11,27 @@
     "test": "jest"
   },
   "jest": {
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+    },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!@testing-library|your-esm-package)"
+    ],
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "testMatch": [
+      "**/src/view-trip/components/?(*.)+(spec|test).[tj]s?(x)",
+      "**/src/components/ui/**/*.(spec|test).[tj]s?(x)"
+    ]
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
@@ -42,6 +62,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
     "@eslint/js": "^9.9.0",
