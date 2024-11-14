@@ -1,0 +1,50 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - feature-new-tests  # Run tests when changes are pushed to this branch
+  pull_request:
+    branches:
+      - main  # Run tests for pull requests targeting the main branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Use the appropriate Node.js version for your project
+
+      # Step 3: Cache node modules to speed up the workflow
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: |
+          npm install
+
+      # Step 5: Run tests for all test files
+      - name: Run tests for BookingAndDownload, FlightCardItem, and Flights components
+        run: |
+          npm test -- BookingAndDownload.test.js
+          npm test -- FlightCardItem.test.js
+          npm test -- Flights.test.js
+
+      # Optional: You can run all tests if you prefer
+      # - name: Run all tests
+      #   run: |
+      #     npm test
