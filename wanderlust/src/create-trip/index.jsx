@@ -20,6 +20,7 @@ import { FcGoogle } from "react-icons/fc";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
 import { FaPlane, FaTrain, FaCar, FaBus } from 'react-icons/fa';
+import Footer from '../view-trip/components/Footer';
 
 // Map container style
 const containerStyle = {
@@ -390,6 +391,8 @@ function CreateTrip() {
             </DialogHeader>
           </DialogContent>
         </Dialog>
+        {/* Add Footer component */}
+        <Footer />
       </div>
     </>
   );
