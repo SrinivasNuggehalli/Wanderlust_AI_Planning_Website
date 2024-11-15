@@ -46,4 +46,4 @@ jobs:
       - name: Run tests for BookingAndDownload, FlightCardItem, and Flights components
         working-directory: wanderlust
         run: |
-          npm test -- BookingAndDownload.test.js FlightCardItem.test.js Flights.test.js
+          npm test -- BookingAndDownload.test.js FlightCardItem.test.js Flights.test.js Packages.test.js
