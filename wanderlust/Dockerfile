@@ -4,8 +4,8 @@ FROM node:18-alpine
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to install dependencies
-COPY ["wanderlust/package.json", "wanderlust/package-lock.json", "./"]
+# Copy package.json and package-lock.json
+COPY ["package.json", "package-lock.json", "./"]
 
 
 # Install dependencies
