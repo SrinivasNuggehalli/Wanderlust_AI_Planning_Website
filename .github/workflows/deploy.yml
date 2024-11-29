@@ -29,7 +29,7 @@ jobs:
       
       - name: Run Docker container
         run: |
-          docker run -p 3000:3000 \
+          docker run -p 5173:5173 ***/wanderlust_ai:latest
             --env VITE_GOOGLE_PLACE_API_KEY=${{ secrets.VITE_GOOGLE_PLACE_API_KEY }} \
             --env VITE_GOOGLE_AUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }} \
             --env VITE_GOOGLE_GEMINI_AI_API_KEY=${{ secrets.VITE_GOOGLE_GEMINI_AI_API_KEY }} \
