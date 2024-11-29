@@ -28,7 +28,7 @@ jobs:
       # Step 4: Build and tag the Docker image
       - name: Build Docker image
         run: |
-          docker build -t wanderlust_ai .
+          docker build -t wanderlust_ai -f wanderlust/Dockerfile .
 
       # Step 5: Run the Docker container locally with secrets
       - name: Run Docker container
