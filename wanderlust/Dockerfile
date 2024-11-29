@@ -34,7 +34,7 @@ RUN npm install --save-dev @testing-library/react @testing-library/jest-dom jest
 COPY . .
 
 # Expose the application port
-EXPOSE 3000
+EXPOSE 5173
 
 # Command to start the application
 CMD ["npm", "run", "dev"]
