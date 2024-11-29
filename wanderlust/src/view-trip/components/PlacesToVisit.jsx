@@ -86,7 +86,7 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
           newPlace.time = oldPlace.time; // Preserve the original time slot
           dayPlan.plan[placeIndex] = newPlace;
           setItinerary(updatedItinerary);
-          console.log(`Replaced place "${oldPlace.placeName}" with "${newPlace.placeName}" on Day ${dayPlan.day}`);
+          console.log(`Replaced place "${oldPlace.placeName}" with "${newPlace.placeName}" on ${dayPlan.day}`);
 
           // Update selected places if necessary
           if (
@@ -125,7 +125,7 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
         {Array.isArray(itinerary) && itinerary.length > 0 ? (
           itinerary.map((item, dayIndex) => (
             <div className='mt-5' key={dayIndex}>
-              <h2 className='font-medium text-lg'>Day {item.day}</h2>
+              <h2 className='font-medium text-lg'> {item.day}</h2>
               <div className='grid md:grid-cols-2 gap-5'>
                 {Array.isArray(item.plan) && item.plan.length > 0 ? (
                   item.plan.map((place, placeIndex) => (
