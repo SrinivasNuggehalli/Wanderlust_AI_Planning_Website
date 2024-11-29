@@ -26,9 +26,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       # Step 4: Build and tag the Docker image
-      - name: Build Docker image
-        run: |
-          docker build -t wanderlust_ai -f wanderlust/Dockerfile .
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: srinivasnv1998/wanderlust_ai:latest
 
       # Step 5: Run the Docker container locally with secrets
       - name: Run Docker container
