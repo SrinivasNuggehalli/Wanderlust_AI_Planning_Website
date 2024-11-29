@@ -5,7 +5,8 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json to install dependencies
-COPY ["package.json", "package-lock.json", "./"]
+COPY ["wanderlust/package.json", "wanderlust/package-lock.json", "./"]
+
 
 # Install dependencies
 RUN npm install
