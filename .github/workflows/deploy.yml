@@ -29,6 +29,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
+          context: ./wanderlust  # Specify the directory containing the Dockerfile
+          file: ./wanderlust/Dockerfile  # Path to the Dockerfile
           push: true
           tags: srinivasnv1998/wanderlust_ai:latest
 
