@@ -41,5 +41,5 @@ jobs:
             --env VITE_GOOGLE_PLACE_API_KEY=${{ secrets.VITE_GOOGLE_PLACE_API_KEY }} \
             --env VITE_GOOGLE_AUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }} \
             --env VITE_GOOGLE_GEMINI_AI_API_KEY=${{ secrets.VITE_GOOGLE_GEMINI_AI_API_KEY }} \
-            ***/wanderlust_ai:latest
+            *** /wanderlust_ai:latest
 
