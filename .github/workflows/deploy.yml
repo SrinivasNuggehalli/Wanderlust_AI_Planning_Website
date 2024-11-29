@@ -37,8 +37,9 @@ jobs:
       # Step 5: Run the Docker container locally with secrets
       - name: Run Docker container
         run: |
-          docker run -d -p 3000:3000 srinivasnv1998/wanderlust_ai:latest
+          docker run -d -p 3000:3000 \
             --env VITE_GOOGLE_PLACE_API_KEY=${{ secrets.VITE_GOOGLE_PLACE_API_KEY }} \
             --env VITE_GOOGLE_AUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }} \
             --env VITE_GOOGLE_GEMINI_AI_API_KEY=${{ secrets.VITE_GOOGLE_GEMINI_AI_API_KEY }} \
-            wanderlust_ai
+            ***/wanderlust_ai:latest
+
