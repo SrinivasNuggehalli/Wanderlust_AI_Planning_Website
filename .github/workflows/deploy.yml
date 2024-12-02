@@ -29,9 +29,8 @@ jobs:
       
       - name: Run Docker container
         run: |
-          docker run -p 5173:5173 \
-            --env VITE_GOOGLE_PLACE_API_KEY=${{ secrets.VITE_GOOGLE_PLACE_API_KEY }} \
-            --env VITE_GOOGLE_AUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }} \
-            --env VITE_GOOGLE_GEMINI_AI_API_KEY=${{ secrets.VITE_GOOGLE_GEMINI_AI_API_KEY }} \
+          docker run -d -p 5173:5173 \
+            -e VITE_GOOGLE_PLACE_API_KEY="${{ secrets.VITE_GOOGLE_PLACE_API_KEY }}" \
+            -e VITE_GOOGLE_AUTH_CLIENT_ID="${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}" \
+            -e VITE_GOOGLE_GEMINI_AI_API_KEY="${{ secrets.VITE_GOOGLE_GEMINI_AI_API_KEY }}" \
             srinivasnv1998/wanderlust_ai:latest
-
