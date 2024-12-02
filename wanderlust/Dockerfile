@@ -7,19 +7,14 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json
 COPY ["package.json", "package-lock.json", "./"]
 
-# Install dependencies including vite and its plugin
+# Install dependencies
 RUN npm install
-RUN npm install -g vite
-RUN npm install @vitejs/plugin-react --save-dev
 
 # Copy the rest of the application source code
 COPY . .
 
-# Expose the application port
+# Expose the Vite development port
 EXPOSE 5173
 
-# Install Vite globally
-RUN npm install -g vite
-
-# Command to start the application
+# Command to start the Vite application
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
