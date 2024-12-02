@@ -11,6 +11,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Create .env file
+        working-directory: ./wanderlust
         run: |
           echo "VITE_GOOGLE_PLACE_API_KEY=${{ secrets.VITE_GOOGLE_PLACE_API_KEY }}" >> .env
           echo "VITE_GOOGLE_AUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}" >> .env
