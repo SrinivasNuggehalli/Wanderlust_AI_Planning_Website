@@ -13,5 +13,8 @@ COPY . .
 # Expose the application port
 EXPOSE 5173
 
+# Install Vite globally
+RUN npm install -g vite
+
 # Command to start the application
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
