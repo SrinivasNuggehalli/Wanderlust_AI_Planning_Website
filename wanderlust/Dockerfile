@@ -7,6 +7,11 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json
 COPY ["package.json", "package-lock.json", "./"]
 
+# Install dependencies including vite and its plugin
+RUN npm install
+RUN npm install -g vite
+RUN npm install @vitejs/plugin-react --save-dev
+
 # Copy the rest of the application source code
 COPY . .
 
