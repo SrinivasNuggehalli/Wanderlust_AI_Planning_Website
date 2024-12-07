@@ -2,18 +2,22 @@ import React, { useEffect, useState } from 'react';
 import PlaceCardItem from './PlaceCardItem';
 import { getNewPlace } from '@/service/gemini';
 
+
 function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
   const [loading, setLoading] = useState(false);
   const [replacingIndex, setReplacingIndex] = useState(null);
   const [itinerary, setItinerary] = useState([]);
 
+
   useEffect(() => {
     console.log('--- PlacesToVisit Component Mounted or Updated ---');
     console.log('Received trip prop:', trip);
 
+
     if (trip && trip.tripData && trip.tripData.itinerary) {
       const itineraryData = trip.tripData.itinerary;
       console.log('Itinerary Data:', itineraryData);
+
 
       if (Array.isArray(itineraryData.dailyPlans)) {
         console.log('Setting itinerary to itineraryData.dailyPlans');
@@ -31,15 +35,19 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
     }
   }, [trip]);
 
+
   const replacePlace = async (dayIndex, placeIndex, e) => {
     e.preventDefault();
     e.stopPropagation();
 
+
     if (loading) return;
+
 
     const replacementKey = `${dayIndex}-${placeIndex}`;
     setReplacingIndex(replacementKey);
     setLoading(true);
+
 
     try {
       const destination = trip?.userSelection?.location?.label;
@@ -47,7 +55,9 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
         throw new Error('Destination not found');
       }
 
+
       const budget = trip?.userSelection?.budget || 'Moderate';
+
 
       // Collect all existing place names in the itinerary
       const allPlaceNames = itinerary.flatMap((day) =>
@@ -55,14 +65,17 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
       );
       const oldPlaceName = itinerary[dayIndex]?.plan?.[placeIndex]?.placeName;
 
+
       // Exclude the old place name (since we're replacing it)
       const existingPlaceNames = allPlaceNames.filter(
         (name) => name !== oldPlaceName
       );
 
+
       let newPlace = null;
       let attempts = 0;
       const maxAttempts = 5; // Limit the number of retries to prevent infinite loops
+
 
       while (attempts < maxAttempts) {
         const potentialPlace = await getNewPlace(destination, budget);
@@ -77,9 +90,11 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
         console.log(`Attempt ${attempts}: Found duplicate or invalid place. Retrying...`);
       }
 
+
       if (newPlace) {
         const updatedItinerary = [...itinerary];
         const dayPlan = updatedItinerary[dayIndex];
+
 
         if (dayPlan && Array.isArray(dayPlan.plan)) {
           const oldPlace = dayPlan.plan[placeIndex];
@@ -87,6 +102,7 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
           dayPlan.plan[placeIndex] = newPlace;
           setItinerary(updatedItinerary);
           console.log(`Replaced place "${oldPlace.placeName}" with "${newPlace.placeName}" on ${dayPlan.day}`);
+
 
           // Update selected places if necessary
           if (
@@ -112,14 +128,17 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
     }
   };
 
+
   // Handle cases where itinerary data might not be available yet
   if (!trip || !trip.tripData || !trip.tripData.itinerary) {
     return <p>Loading itinerary...</p>;
   }
 
+
   return (
     <div className='p-5'>
       <h2 className='font-bold text-xl'>Places to Visit</h2>
+
 
       <div>
         {Array.isArray(itinerary) && itinerary.length > 0 ? (
@@ -143,47 +162,46 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
                         />
                       </div>
                       <button
-                        onClick={(e) => replacePlace(dayIndex, placeIndex, e)}
-                        disabled={loading && replacingIndex === `${dayIndex}-${placeIndex}`}
-                        className={`
-                          absolute top-2 right-2 z-10
-                          ${loading && replacingIndex === `${dayIndex}-${placeIndex}` 
-                            ? 'bg-gray-400' 
-                            : 'bg-red-500 hover:bg-red-600'} 
-                          text-white px-3 py-1.5 rounded-md text-sm
-                          transition-all duration-200
-                          opacity-0 group-hover:opacity-100
-                          ${loading && replacingIndex === `${dayIndex}-${placeIndex}` ? 'opacity-100 cursor-not-allowed' : ''}
-                        `}
-                      >
-                        {loading && replacingIndex === `${dayIndex}-${placeIndex}` ? (
-                          <span className="flex items-center">
-                            <svg
-                              className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              ></circle>
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              ></path>
-                            </svg>
-                            Replacing...
-                          </span>
-                        ) : (
-                          'Replace'
-                        )}
-                      </button>
+  onClick={(e) => replacePlace(dayIndex, placeIndex, e)}
+  disabled={loading && replacingIndex === `${dayIndex}-${placeIndex}`}
+  className={`
+    absolute top-2 right-2 z-20
+    ${loading && replacingIndex === `${dayIndex}-${placeIndex}`
+      ? 'bg-gray-400 cursor-not-allowed'
+      : 'bg-red-500 hover:bg-red-600'}
+    text-white px-2 py-1 mt-5 rounded-md text-xs font-medium shadow
+    transition-opacity duration-300 ease-in-out
+    opacity-0 group-hover:opacity-100
+  `}
+>
+  {loading && replacingIndex === `${dayIndex}-${placeIndex}` ? (
+    <span className="flex items-center">
+      <svg
+        className="animate-spin -ml-1 mr-1 h-3 w-3 text-white"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      Replacing...
+    </span>
+  ) : (
+    'Replace'
+  )}
+</button>
                     </div>
                   ))
                 ) : (
@@ -196,6 +214,7 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
           <p>No itinerary available.</p>
         )}
       </div>
+
 
       {selectedPlaces.length > 0 && (
         <div className='mt-10 p-5 bg-white rounded-lg shadow-lg'>
@@ -223,5 +242,6 @@ function PlacesToVisit({ trip, onSelectPlace, selectedPlaces }) {
     </div>
   );
 }
+
 
 export default PlacesToVisit;
