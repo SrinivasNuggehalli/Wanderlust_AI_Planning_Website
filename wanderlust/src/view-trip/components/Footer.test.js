@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import Footer from './Footer';
 import '@testing-library/jest-dom'; // Provides additional matchers for testing
 
+
 describe('Footer Component', () => {
   test('renders the footer text correctly', () => {
     render(<Footer />);
@@ -11,6 +12,7 @@ describe('Footer Component', () => {
     expect(footerText).toHaveClass('text-center');
     expect(footerText).toHaveClass('text-gray-400');
   });
+
 
   test('footer is wrapped inside a div with correct class', () => {
     render(<Footer />);
